@@ -1,6 +1,4 @@
-@import './variables.css';
-
-#signup {
+.signup {
     width: 100vw;
     height: 100%;
     display: flex;
@@ -9,17 +7,7 @@
     outline: auto;
 }
 
-#topBar {
-    padding: 1rem 0;
-    background-color: var(--primary-colour);
-    height: auto;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    z-index: 10;
-}
-
-#signupContainer {
+.signupContainer {
     background-color: var(--primary-colour);
     max-width: 600px;
     width: 80%;
@@ -34,7 +22,7 @@
     /* box-shadow: 0 0 2rem 1rem black; */
 }
 
-#signupContainer::after {
+.signupContainer::after {
     content: "";
     width: 80%;
     height: 100%;
@@ -56,27 +44,11 @@ input {
     color: black;
 }
 
-#signupContainer button {
-    color: aliceblue;
-    font-size: 2rem;
-    width: 80%;
-    /* max-width: 400px; */
-    height: 5rem;
-    background-color: var(--secondary-colour2);
-    border: 0px;
-    margin-top: 6rem;
-    border-radius: 5px;
-}
-
-#signupContainer button:hover {
-    scale: 110%;
-}
-
-#signupContainer h1 {
+.signupContainer h1 {
     font-size: 3rem;
 }
 
-#formContainer {
+.formContainer {
     margin-top: 2rem;
     display: flex;
     flex-direction: column;
@@ -100,4 +72,10 @@ input {
 
 input:focus {
     outline: none;
+}
+
+.loginBtn {
+    font-size: 2rem;
+    color: aliceblue;
+    text-decoration: none;
 }
