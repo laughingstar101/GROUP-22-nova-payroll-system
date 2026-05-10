@@ -3,6 +3,7 @@ import SetForm from "./components/SetForm";
 import styles from './CompanyRegister.module.css'
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { supabase } from './utils/supabase/supabase.js'
 
 export default function CompanyRegister() {
     const [companyFormData, setCompanyFormData] = useState({
@@ -16,10 +17,24 @@ export default function CompanyRegister() {
         SetForm(setCompanyFormData, fieldName, value)
     }
 
-    const handleSubmit = (event) => {
+    async function handleSubmit(event) {
         event.preventDefault()
         console.log('Company registration data:', companyFormData)
-        // TODO: send companyFormData to your API or Supabase here
+        const { data, error } = await supabase.auth.signUp({
+            email: companyFormData.companyEmail,
+            password: companyFormData.companyPassword,
+            options: {
+                data: {
+                    companyName: companyFormData.companyName
+                }
+            }
+        })
+        
+        if (error) {
+            console.error('Signup error:', error.message)
+        } else {
+            console.log('Signup successful:', data)
+        }
     }
 
     return (
