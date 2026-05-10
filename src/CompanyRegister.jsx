@@ -13,14 +13,18 @@ export default function CompanyRegister() {
     })
     const [passwordVisBtn, setVis] = useState(false) // true = visible, false = hidden
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleInputChange = (fieldName, value) => {
         SetForm(setCompanyFormData, fieldName, value)
     }
 
     async function handleSubmit(event) {
-        event.preventDefault()
+        event.preventDefault();
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         console.log('Company registration data:', companyFormData)
-        const { data, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
             email: companyFormData.companyEmail,
             password: companyFormData.companyPassword,
             options: {
@@ -31,10 +35,13 @@ export default function CompanyRegister() {
         })
         
         if (error) {
-            console.error('Signup error:', error.message)
-        } else {
-            console.log('Signup successful:', data)
+            if (error.status === 429) {
+                alert("Too many registration attempts. Please wait a few minutes before trying again.");
+            } else {
+                console.error('Signup error:', error.message)
+            }
         }
+        setIsSubmitting(false)
     }
 
     return (
