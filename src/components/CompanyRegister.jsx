@@ -1,9 +1,9 @@
-import TopBar from "./components/TopBar.jsx";
-import SetForm from "./components/SetForm";
+import TopBar from "./TopBar.jsx";
+import SetForm from "./SetForm.js";
 import styles from './CompanyRegister.module.css'
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { supabase } from './utils/supabase/supabase.js'
+import { supabase } from '../utils/supabase/supabase.js'
 
 export default function CompanyRegister() {
     const [companyFormData, setCompanyFormData] = useState({
