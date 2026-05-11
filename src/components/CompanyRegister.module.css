@@ -32,10 +32,6 @@ input {
     color: black;
 }
 
-.signupContainer h1 {
-    font-size: 3rem;
-}
-
 .formContainer {
     margin-top: 2rem;
     display: flex;
@@ -45,49 +41,38 @@ input {
     width: 100%;
 }
 
-.formLabel {
-    width: 100%;
-    text-align: left;
-    font-size: 1.5rem;
-    margin-top: 3rem;
-}
-
-.inputContainer {
+/* .inputContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     gap: 3rem;
     margin-top: 2rem;
-}
+} */
 
-.formInput {
+/* .formInput {
     width: 100%;
     font-size: inherit;
-    height: 40px;
+    height: 3rem;
     padding: 0 10px;
     border: none;
-}
+} */
 
-.passwordInputContainer {
+/* .passwordInputContainer {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-}
+} */
 
-.passwordVisibility {
-    height: 40px;
-    width: 40px;
+/* .passwordVisibility {
+    height: 3rem;
+    width: 3rem;
     padding: 6px;
     background-color: var(--secondary-colour);
-}
+} */
 
-input:focus {
-    outline: none;
-}
-
-.loginBtn {
+/* .loginBtn {
     font-size: 1rem; 
     color: aliceblue;
     margin-top: 3rem;
@@ -96,9 +81,9 @@ input:focus {
 .loginBtn:hover {
     color: rgb(143, 248, 248);
     cursor: pointer;
-}
+} */
 
-.submitBtn {
+/* .submitBtn {
     color: aliceblue;
     font-size: 2rem;
     font-family: 'Roboto Mono', Arial, Helvetica, sans-serif;
@@ -108,7 +93,7 @@ input:focus {
     justify-content: center;  
     width: 80%;
     /* max-width: 400px; */
-    height: 5rem;
+    /* height: 5rem;
     background-color: var(--secondary-colour2);
     border: 0px;
     margin-top: 3rem;
@@ -119,4 +104,4 @@ input:focus {
 
 .submitBtn:hover {
     transform: scale(1.1);
-}
+} */ 
