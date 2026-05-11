@@ -95,6 +95,7 @@ input:focus {
 
 .loginBtn:hover {
     color: rgb(143, 248, 248);
+    cursor: pointer;
 }
 
 .submitBtn {
