@@ -90,7 +90,6 @@ export default function CompanyRegister() {
             alert(error.message);
             setIsSubmitting(false);
         } else {
-            alert("Login successful");
             navigate("/dashboard");
         }
     } 
