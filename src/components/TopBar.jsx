@@ -1,10 +1,9 @@
 import logoImg from '../assets/logo.png'
-import styles from './TopBar.module.css'
 
 export default function TopBar() {
     return (
-        <section className={styles.topBar}>
-            <img src={logoImg} className={styles.headerLogo} height='30'></img>
+        <section className={`bg-primary-colour w-full flex justify-center pt-4 pb-4`}>
+            <img src={logoImg} className="h-15" height='30'></img>
         </section>
     )
 }

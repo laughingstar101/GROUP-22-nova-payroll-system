@@ -1,5 +1,4 @@
 import TopBar from "./TopBar.jsx";
-import styles from './CompanyRegister.module.css'
 import { useState } from "react";
 import { supabase } from '../utils/supabase/supabase.js'
 
@@ -51,18 +50,18 @@ export default function CompanyRegister() {
     }
 
     return (
-        <div className={styles.signup}>
+        <div className="min-h-screen flex flex-col items-center bg-linear-to-br from-secondary-colour to-secondary-colour2">
             <TopBar />
-            <section className={styles.signupContainer}>
+            <section className="max-w-2xl w-4/5 pt-12 pb-12 rounded-xl flex flex-col items-center mt-12 bg-primary-colour shadow-2xl shadow-primary-colour">
                 {!isLogin ? (
-                    <section>
-                        <h1 className="text-5xl">Register Company!</h1>
-                        <form onSubmit={handleSubmit} className="flex flex-col items-center w-full!">
+                    <section className="w-full">
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-12 items-center pl-12 pr-12">
+                            <h1 className="text-5xl text-white mb-4 text-center">Register Company</h1>
                             <input 
                                 placeholder="Company Name"
                                 name="companyName"
                                 type="text" 
-                                className="bg-amber-50 w-full h-12! pl-2.5! mt-12!"
+                                className="bg-amber-50 w-full h-12! pl-2.5!"
                                 value={companyFormData.companyName} 
                                 onChange={handleInputChange}
                             />
@@ -70,11 +69,11 @@ export default function CompanyRegister() {
                                 placeholder="Company Email"
                                 name="companyEmail"
                                 type="email" 
-                                className="bg-amber-50 w-full h-12! pl-2.5! mt-12!"
+                                className="bg-amber-50 w-full h-12! pl-2.5!"
                                 value={companyFormData.companyEmail} 
                                 onChange={handleInputChange}
                             />
-                            <span className="flex w-full mt-12! items-center bg-secondary-colour">
+                            <span className="flex w-full items-center bg-secondary-colour">
                                 <input 
                                     placeholder="Password"
                                     name="companyPassword"
@@ -107,15 +106,15 @@ export default function CompanyRegister() {
                                     </svg>
                                 )}
                             </span>
-                            <button type="submit" className="bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all mt-12!">REGISTER</button>
-                            <p onClick={() => setIsLogin(true)} className="text-white mt-12! hover:cursor-pointer hover:text-cyan-300">Have company? Login</p>
+                            <button type="submit" className="bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all">REGISTER</button>
+                            <p onClick={() => setIsLogin(true)} className="text-white hover:cursor-pointer hover:text-cyan-300">Have company? Login</p>
                         </form>
                     </section>
                 ) : (
-                    <section className='flex flex-col items-center w-full!'>
-                        <h1 className="text-5xl">Login Company</h1>
-                        <form onSubmit={handleSubmit} className='flex flex-col items-center justify-end w-full mt-12! gap-12'>
-                            <input placeholder="Enter email" className="bg-amber-50 w-full h-12! pl-2.5!"></input>
+                    <section className="w-full">
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-12 items-center pl-12 pr-12">
+                            <h1 className="text-5xl text-white mb-4 text-center">Login Company</h1>
+                            <input type="email" placeholder="Enter email" className="bg-amber-50 w-full h-12! pl-2.5!"></input>
                             <span className="flex w-full items-center bg-secondary-colour">
                                 <input 
                                     placeholder="Password"
@@ -147,8 +146,8 @@ export default function CompanyRegister() {
                                 )}
                             </span>
                             <button type="submit" className="bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all">LOGIN</button>
+                            <p onClick={() => setIsLogin(false)} className="text-white hover:cursor-pointer hover:text-cyan-300">Back to register</p>
                         </form>
-                        <p onClick={() => setIsLogin(false)} className="text-white mt-12! hover:cursor-pointer hover:text-cyan-300">Back to register</p>
                     </section>
                 )}
                 </section>
