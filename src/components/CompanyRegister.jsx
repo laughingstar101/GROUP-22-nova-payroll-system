@@ -159,14 +159,14 @@ export default function CompanyRegister() {
                                 )}
                             </span>
                             <button type="submit" className="bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all">REGISTER</button>
-                            <p onClick={() => setIsLogin(true)} className="text-white hover:cursor-pointer hover:text-cyan-300">Have company? Login</p>
+                            <p onClick={() => setIsLogin(true)} className="text-white hover:cursor-pointer hover:text-cyan-300">Login as user</p>
                         </form>
                     </section>
                 ) : (
                     // SIGNIN
                     <section className="w-full">
                         <form onSubmit={handleLoginSubmit} className="flex flex-col gap-12 items-center pl-12 pr-12">
-                            <h1 className="text-5xl text-white mb-4 text-center">Login Company</h1>
+                            <h1 className="text-5xl text-white mb-4 text-center">Login user</h1>
                             <input
                                 type="email" 
                                 name="email"
