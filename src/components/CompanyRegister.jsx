@@ -35,6 +35,12 @@ export default function CompanyRegister() {
             return;
         }
 
+        if (companyFormData.companyPassword.length < 6) {
+            alert("Password must be 6 or more characters!");
+            setIsSubmitting(false);
+            return;
+        }
+
         console.log('Company registration data:', companyFormData)
 
         const { data: authData, error: signUpError } = await supabase.auth.signUp({
