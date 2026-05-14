@@ -78,10 +78,25 @@ export default function Dashboard() {
             </div>
             <div className="container bg-primary-colour mx-auto py-4 flex flex-col items-center mt-12">
                 {employee && employee.type === 'HR' && (
-                    <section>
+                    <section className="w-full flex flex-col items-center">
                         <p className="text-white text-2xl">Welcome back, HR</p>
-                        <div>
-                            
+                        <div className="grid grid-cols-4 w-full mt-8 px-8">
+                            <div className="bg-white">1</div>
+                            <div className="bg-red-600">2</div>
+                            <div className="bg-blue-600">3</div>
+                            <div className="bg-yellow-400">4</div>
+                            <div className="bg-red-600">2</div>
+                            <div className="bg-blue-600">3</div>
+                            <div className="bg-yellow-400">4</div>
+                            <div className="bg-white">1</div>
+                            <div className="bg-blue-600">3</div>
+                            <div className="bg-yellow-400">4</div>
+                            <div className="bg-white">1</div>
+                            <div className="bg-red-600">2</div>
+                            <div className="bg-yellow-400">4</div>
+                            <div className="bg-white">1</div>
+                            <div className="bg-red-600">2</div>
+                            <div className="bg-blue-600">3</div>
                         </div>
                     </section>
                 )} 
