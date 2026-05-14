@@ -185,13 +185,23 @@ export default function Dashboard() {
                                             />
                                         </td>
                                         <td>
-                                            <input 
+                                            {/* <input 
                                                 type="text" 
                                                 className="bg-gray-100 w-full px-2 py-1"
                                                 placeholder=""
                                                 value={emp.type}
                                                 onChange={(e) => handleEmployeeChange(emp.id, 'type', e.target.value)}
-                                            />
+                                            /> */}
+                                                <select
+                                                    className="bg-gray-100 w-full px-2 py-1"
+                                                    value={emp.type}
+                                                    onChange={(e) => handleEmployeeChange(emp.id, 'type', e.target.value)}
+                                                >
+                                                    <option value="" disabled>Select role</option>
+                                                    <option value="Part-time">Part-time</option>
+                                                    <option value="Full-time">Full-time</option>
+                                                    <option value="HR">HR</option>
+                                                </select>
                                         </td>
                                         <td>
                                             <button 
