@@ -61,26 +61,47 @@ export default function CompanyRegister() {
         if (signUpError) {
             if (signUpError.status === 429) {
                 alert("Too many registration attempts. Please wait a few minutes before trying again.");
+            } else if (signUpError.status === 422) {
+                alert("Email already exists. Please try again.")
             } else {
                 console.error('Signup error:', signUpError.message)
                 alert("Signup error. Please try again.");
             }
         } else {
-            const { error: insertError } = await supabase
+            const { data: companyData, error: companyError } = await supabase
                 .from('Company')
                 .insert({
-                company_id: authData.user.id,
-                company_email: companyFormData.companyEmail,
-                company_name: companyFormData.companyName
+                    company_id: authData.user.id,
+                    company_email: companyFormData.companyEmail,
+                    company_name: companyFormData.companyName
+                })
+                .select('id')
+                .single();
+
+            if (companyError) {
+                console.error("Company insert error: ", companyError);
+                alert('Failed to create company record.');
+                setIsSubmitting(false);
+                return;
+            }
+
+            const { error: employeeError } = await supabase
+                .from('Employee')
+                .insert({
+                    employee_email: companyFormData.companyEmail,
+                    employee_name: 'HR ' + companyFormData.companyName,
+                    type: 'HR',
+                    employee_company: companyData.id  
                 });
 
-            if (insertError) console.error('Insert error:', insertError);
-            else {
+            if (employeeError) {
+                console.error('Employee insert error:', employeeError);
+                alert('Company created but employee record failed.');
+            } else {
                 alert('Registration successful!');
-                navigate("/dashboard")
-            }
+                navigate('/dashboard');
+            };
         }
-        setIsSubmitting(false)
     }
 
     const handleLoginChange = (e) => {
