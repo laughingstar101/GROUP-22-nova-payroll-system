@@ -114,31 +114,31 @@ export default function Dashboard() {
                                     <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">1</th>
                                     <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Sham</th>
                                     <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">sham@email.com</th>
-                                    <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Admin</th>
+                                    <th className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">HR</th>
                                 </tr>
                                 <tr>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">2</td>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">John Doe</td>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">john@company.com</td>
-                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Manager</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">HR</td>
                                 </tr>
                                 <tr>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">3</td>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Jane Smith</td>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">jane@company.com</td>
-                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">HR</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Part-time</td>
                                 </tr>
                                 <tr>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">4</td>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Mike Johnson</td>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">mike@company.com</td>
-                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Developer</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Part-time</td>
                                 </tr>
                                 <tr>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">5</td>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Sarah Lee</td>
                                     <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">sarah@company.com</td>
-                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Designer</td>
+                                    <td className="text-black sm:text-lg font-normal text-sm text-center py-2 bg-complementary-colour2">Full-time</td>
                                 </tr>
                             </tbody>
                         </table>
