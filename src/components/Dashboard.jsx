@@ -45,7 +45,7 @@ export default function Dashboard() {
                 console.error("Error fetching data:", error);
                 setEmployee(null);
                 setCompany(null);
-                // Do NOT redirect – just show a friendly message
+                alert("Error fetching data from database.")
             } finally {
                 setLoading(false);
             }
