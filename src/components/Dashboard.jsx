@@ -80,7 +80,7 @@ export default function Dashboard() {
                 id: nextId + i,
                 name: '',
                 email: '',
-                role: ''
+                type: ''
             });
         }
         setEmployeeList([...employeeList, ...newEmployees]);
@@ -97,7 +97,7 @@ export default function Dashboard() {
     }
 
     const submitEmployees = async () => {
-        const incomplete = employeeList.some(emp => !emp.name || !emp.email || !emp.role);
+        const incomplete = employeeList.some(emp => !emp.name || !emp.email || !emp.type);
         if (incomplete) {
             alert("Please fill in all fields for each employee.");
             return;
@@ -108,7 +108,7 @@ export default function Dashboard() {
             .insert(employeeList.map(emp => ({
                 employee_name: emp.name,
                 employee_email: emp.email,
-                role: emp.role,
+                type: emp.type,
                 employee_company: company.id
             })));
 
@@ -132,7 +132,8 @@ export default function Dashboard() {
             <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
                 {employee && employee.type === 'HR' && (
                     <section className="w-full flex flex-col items-center">
-                        <p className="text-white text-3xl font-bold">Welcome back, HR</p>
+                        <p className="text-white text-3xl font-bold text-center">{company.company_name}</p>
+                        <p className="text-white text-2xl text-center mt-2">Welcome back, {employee.type}</p>
                         <div className="w-full mt-4 flex md:flex-row flex-col md:gap-0 gap-2 justify-between">
                             <p className="text-white text-lg">Amount of employees: {employeeList.length}</p>
                             <div className="flex gap-4 md:flex-row flex-col">
@@ -188,8 +189,8 @@ export default function Dashboard() {
                                                 type="text" 
                                                 className="bg-gray-100 w-full px-2 py-1"
                                                 placeholder=""
-                                                value={emp.role}
-                                                onChange={(e) => handleEmployeeChange(emp.id, 'role', e.target.value)}
+                                                value={emp.type}
+                                                onChange={(e) => handleEmployeeChange(emp.id, 'type', e.target.value)}
                                             />
                                         </td>
                                         <td>
