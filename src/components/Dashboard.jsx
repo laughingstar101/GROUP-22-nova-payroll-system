@@ -37,7 +37,7 @@ export default function Dashboard() {
                 if (employeeData.employee_company) {
                     const { data: companyData, error: companyError } = await supabase
                         .from("Company")
-                        .select("company_name, company_email")
+                        .select("id, company_name, company_email")
                         .eq("id", employeeData.employee_company)
                         .single();
 
@@ -90,6 +90,7 @@ export default function Dashboard() {
 
     const handleEmployeeChange = (id, field, value) => {
         setEmployeeList(prevList => prevList.map(emp => emp.id === id ? { ...emp, [field]: value } : emp))
+        console.log(employeeList);
     }
 
     const deleteEmployee = (id) => {
@@ -113,7 +114,12 @@ export default function Dashboard() {
             })));
 
         if (error) alert("Error submitting employees: ", error.message)
-        else alert (`${employeeList.length} employees added.`);
+        else {
+            alert (`${employeeList.length} employees added.`);
+            setEmployeeList([]);
+            setNextId(1);
+            setAmountToAddEmployee(0);
+        } 
     }
 
     return (
