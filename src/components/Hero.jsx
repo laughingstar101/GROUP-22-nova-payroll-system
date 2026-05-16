@@ -35,7 +35,7 @@ export default function Hero() {
                     <span className='text-white text-shadow-sm text-shadow-black text-7xl font-hero! text-left'>a</span>
                 </span>
                 <p className='text-complementary-colour text-shadow-sm text-shadow-black text-6xl font-hero! text-left'>Payroll System</p>
-                <p className='text-slate-300 text-xl font-hero! text-left mt-2'>
+                <p className='text-white text-xl font-hero! text-left mt-2'>
                     Use our system to launch your company's payroll management to new heights!
                 </p>
                 <button 
