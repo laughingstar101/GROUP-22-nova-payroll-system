@@ -1,8 +1,7 @@
-// import CompanyRegister from "./components/CompanyRegister";
-import CompanyRegister from "./components/CompanyRegister";
+import Hero from "./components/Hero";
 
 export default function App() {
     return (
-        <CompanyRegister/>
+        <Hero/>
     )
 }
