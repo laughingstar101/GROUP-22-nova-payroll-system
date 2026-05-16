@@ -28,7 +28,7 @@ export default function Hero() {
             </div>
             
             <div className="flex-1 z-10 flex flex-col justify-center items-baseline mr-180 w-165">
-                <p className='text-complementary-colour text-6xl font-hero! text-left'>Nova Payroll System</p>
+                <p className='text-complementary-colour text-shadow-sm text-shadow-black text-6xl font-hero! text-left'>Nova Payroll System</p>
                 <p className='text-slate-300 text-xl font-hero! text-left mt-2'>
                     Use our system to launch your company's payroll management to new heights!
                 </p>
