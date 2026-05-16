@@ -24,6 +24,10 @@ export default function CompanyRegister() {
         newPassword: ''
     });
 
+    const handleToHome = () => {
+        navigate('/');
+    }
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setCompanyFormData(prev => ({ ...prev, [name]: value }));
@@ -281,7 +285,8 @@ export default function CompanyRegister() {
                     </form>
                 </section>
             )}
-                </section>
+            </section>
+            <p onClick={handleToHome} className="text-white text-center hover:cursor-pointer hover:underline text-lg mt-4">Back to home</p>
         </div>
     )
 }
