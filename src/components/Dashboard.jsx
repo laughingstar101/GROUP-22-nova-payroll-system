@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../utils/supabase/supabase";
-import TopBar from "./TopBar";
+import logoImg from '../assets/logo.png'
+import profileImg from '../assets/profile-empty.png'
 
 export default function Dashboard() {
     const [company, setCompany] = useState(null);
@@ -131,21 +132,26 @@ export default function Dashboard() {
         setAmountToAddEmployee(0);
     }
 
+    const handleGoToProfile = () => {
+        navigate('/profile');
+    }
+
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
-            <TopBar />
-            <div className="absolute md:top-6 top-22">
+            <section className='bg-primary-colour w-full flex justify-between items-center py-4'>
                 <a onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}
-                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center hover:underline pl-4 mt-2"
+                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center hover:underline pl-4 mt-2 outline"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                         <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
                     </svg>
                     back to register
                 </a>
-            </div>
+                <img src={logoImg} className="h-15" height='30'></img>
+                <img onClick={handleGoToProfile} src={profileImg} className="h-15"></img>
+            </section>
             <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
-                {employee && employee.type === 'HR' && (
+                {/* {employee && employee.type === 'HR' && ( */}
                     <section className="w-full flex flex-col items-center">
                         <p className="text-white text-center text-3xl font-bold">Add Employees to {company.company_name}</p>
                         <p className="text-white text-2xl text-center mt-2">Welcome back, {employee.type}</p>
@@ -238,10 +244,10 @@ export default function Dashboard() {
                             </button>
                         )}
                     </section>
-                )} 
-                {employee && employee.type !== 'HR' && (
+                {/* )}  */}
+                {/* {employee && employee.type !== 'HR' && (
                     <p className="text-white text-2xl">Welcome, {employee.employee_name}</p>
-                )}
+                )} */}
                 {!employee && (
                     <p>Employee data loading...</p>
                 )}
