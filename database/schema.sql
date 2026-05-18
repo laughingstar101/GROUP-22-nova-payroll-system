@@ -2,20 +2,24 @@
 -- Nova Payroll System – Database Schema
 
 -- Company table
-CREATE TABLE IF NOT EXISTS public.Company (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  company_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  company_email TEXT NOT NULL,
-  company_name TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
+create table if not exists public."Company" (
+  id uuid not null default gen_random_uuid (),
+  company_email text not null,
+  company_name text null,
+  company_id uuid not null,
+  created_at timestamp with time zone null default now(),
+  constraint Company_pkey primary key (id),
+  constraint Company_company_id_fkey foreign KEY (company_id) references auth.users (id)
+) TABLESPACE pg_default;
 
 -- Employee table
-CREATE TABLE IF NOT EXISTS public.Employee (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  employee_email TEXT NOT NULL,
-  employee_name TEXT NOT NULL,
-  type TEXT NOT NULL,
-  employee_company UUID REFERENCES public.Company(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ DEFAULT now()
-);
+create table if not public."Employee" (
+  id uuid not null default gen_random_uuid (),
+  employee_email text not null,
+  employee_name text not null,
+  type text not null,
+  employee_company uuid null,
+  created_at timestamp with time zone null default now(),
+  constraint Employee_pkey primary key (id),
+  constraint Employee_employee_company_fkey foreign KEY (employee_company) references "Company" (id)
+) TABLESPACE pg_default;
