@@ -43,7 +43,8 @@ npm install
 ```
 npm run dev
 ```
-4. **Database Setup**
+### Database Setup
+
 Execute the SQL in [`database/schema.sql`](database/schema.sql) in your Supabase SQL editor.
 
 ### Security Notes
