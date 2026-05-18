@@ -65,20 +65,29 @@ export default function Profile() {
             navigate("/");
             return;
         }
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('Employee')
             .update({ employee_name: newName})
-            .eq('employee_email', user.email)
+            .ilike('employee_email', user.email)
+            .select();
 
         if (error) {
-            console.error("Error updating name: ", error);
-            alert("Failed to update name. PLease try again.")
-        } else {
-            setEmployee(prev => ({ ...prev, employee_name: newName }));
-            setUpdateName(false);
-            alert("Name updated successfully.");    
+            console.error("Update error:", error);
+            alert("Update failed: " + error.message);
+            return;
         }
-    }
+
+        if (!data || data.length === 0) {
+            console.warn("No rows updated. Email may not match any record.");
+            alert("No matching employee record found. Please contact support.");
+            return;
+        }
+
+        console.log("Updated row:", data[0]);
+        setEmployee(prev => ({ ...prev, employee_name: newName }));
+        setUpdateName(false);
+        alert("Name updated successfully.");
+        }
 
     if (loading) {
         return (
@@ -103,9 +112,6 @@ export default function Profile() {
                                     <input placeholder='New Name' value={newName} onChange={handleNameChange} className='bg-amber-50 w-full h-12! pl-2.5! mt-4'/>
                                     <button 
                                         className='text-black text-lg bg-complementary-colour2 px-4 py-2 rounded-lg hover:scale-105 transition-transform hover:shadow-md hover:shadow-black hover:cursor-pointer'
-                                        onClick={() => {
-                                            setNewName(employee.employee_name);
-                                        }}
                                         type='submit'
                                         form='profile-form'
                                     >Submit</button>
