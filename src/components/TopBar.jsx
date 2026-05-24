@@ -6,7 +6,7 @@ export default function TopBar() {
     const navigate = useNavigate();
     
     const handleGoToHome = () => {
-        navigate('/');
+        navigate('/');  
     }
     return (
         <section className='bg-primary-colour flex justify-center w-full py-4'>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../utils/supabase/supabase";
 import logoImg from '../assets/logo.png'
 import profileImg from '../assets/profile-empty.png'
@@ -134,7 +134,7 @@ export default function Dashboard() {
                 console.error(`Failed to insert employee record for ${emp.email}:`, insertError);
                 alert(`Account created but failed to save employee details for ${emp.email}.`);
             } 
-            
+
             const { error: resetError } = await supabase.auth.resetPasswordForEmail(emp.email);
             if (resetError) {
                 console.warn(`Could not send reset email to ${emp.email}:`, resetError.message);
@@ -160,7 +160,7 @@ export default function Dashboard() {
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                         <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
                     </svg>
-                    back to register
+                    back
                 </a>
                 <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
                 <img onClick={handleGoToProfile} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
@@ -259,7 +259,15 @@ export default function Dashboard() {
                     </section>
                 )}
                 {employee && employee.type !== 'HR' && (
-                    <p className="text-white text-2xl">Welcome, {employee.employee_name}</p>
+                    <section className="w-full">
+                        <p className="text-white text-2xl text-center">Welcome, {employee.employee_name}</p>
+                        <div className="flex justify-around md:flex-row flex-col items-center gap-4 w-full mt-4">
+                            <Link to={'/leave'}>
+                                <button className="bg-complementary-colour2 text-lg w-lg py-2 rounded-md hover:cursor-pointer hover:scale-105 hover:shadow-md hover:shadow-black transition-all duration-100">Apply for leave</button>
+                            </Link>
+                            <button className="bg-complementary-colour text-lg w-lg py-2 rounded-md">Scan attendance</button>
+                        </div>
+                    </section>
                 )}
                 {!employee && (
                     <p>Employee data loading...</p>
