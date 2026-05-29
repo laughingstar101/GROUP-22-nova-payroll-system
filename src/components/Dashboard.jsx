@@ -121,10 +121,25 @@ export default function Dashboard() {
                 alert(`Failed to create auth account for ${emp.email}: ${signUpError.message}`);
                 return;
             }
+
+            const { error: insertError } = await supabase
+                .from("Employee")
+                .insert({
+                    employee_email: emp.email,
+                    employee_name: emp.name,
+                    type: emp.type,
+                    employee_company: company.id
+                });
+            if (insertError) {
+                console.error(`Failed to insert employee record for ${emp.email}:`, insertError);
+                alert(`Account created but failed to save employee details for ${emp.email}.`);
+            } 
+
             const { error: resetError } = await supabase.auth.resetPasswordForEmail(emp.email);
             if (resetError) {
                 console.warn(`Could not send reset email to ${emp.email}:`, resetError.message);
             }
+
         }
         alert (`${employeeList.length} employees added. Password reset emails has been sent`);
         setEmployeeList([]);
@@ -132,26 +147,27 @@ export default function Dashboard() {
         setAmountToAddEmployee(0);
     }
 
-    const handleGoToProfile = () => {
-        navigate('/profile');
-    }
-
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
-                <a onClick={async () => { await supabase.auth.signOut(); navigate("/"); }}
+                <a onClick={async () => { await supabase.auth.signOut(); navigate("/company-register"); }}
                     className="flex items-center gap-2 text-white text-xl cursor-pointer text-center justify-self-start hover:underline pl-4 mt-2"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                         <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
                     </svg>
-                    back to register
+                    log out
                 </a>
                 <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
-                <img onClick={handleGoToProfile} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
+                <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
             </div>
-            <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
-                {employee && employee.type === 'HR' && company && (
+            {employee && employee.type === 'HR' && (
+                <section className="flex justify-center">
+                    <button onClick={() => navigate('/leave')} className="mt-8 bg-complementary-colour text-xl py-2 px-4 cursor-pointer hover:scale-105 transition-all">Approve Leave Applications</button>    
+                </section>
+            )}
+            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 mt-8 rounded-md shadow-xl">
+                {employee && employee.type === 'HR' && (
                     <section className="w-full flex flex-col items-center">
                         <p className="text-white text-center text-3xl font-bold">
                             Add Employees to {company.company_name}
@@ -244,10 +260,16 @@ export default function Dashboard() {
                     </section>
                 )}
                 {employee && employee.type !== 'HR' && (
-                    <p className="text-white text-2xl">Welcome, {employee.employee_name}</p>
+                    <section className="w-full">
+                        <p className="text-white text-2xl text-center">Welcome, {employee.employee_name}</p>
+                        <div className="flex justify-around md:flex-row flex-col items-center gap-4 w-full mt-4">
+                            <button className="bg-complementary-colour2 text-lg w-lg py-2 rounded-md hover:cursor-pointer hover:scale-105 hover:shadow-md hover:shadow-black transition-all duration-100" onClick={() => navigate("/leave")}>Apply for leave</button> 
+                            <button className="bg-complementary-colour text-lg w-lg py-2 rounded-md hover:cursor-pointer hover:scale-105 hover:shadow-md hover:shadow-black transition-all duration-100" onClick={() => navigate("/attendance")}>Scan attendance</button>
+                        </div>
+                    </section>
                 )}
-                {!employee && (
-                    <p>Employee data loading...</p>
+                {employee == null || !employee && (
+                    <p>Employee doesn't exist...</p>
                 )}
             </div>
         </div>

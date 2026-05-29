@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import profileImg from '../assets/profile-empty.png'
-import TopBar from './TopBar'
+import logoImg from '../assets/logo.png'
 import { supabase } from '../utils/supabase/supabase'
 import { useNavigate } from 'react-router-dom'
 
@@ -42,14 +42,6 @@ export default function Profile() {
 
     const handleNameChange = (e) => {
         setNewName(e.target.value);
-    }
-
-    const handleGoToDashboard = () => {
-        navigate('/dashboard');
-    }
-
-    const handleGoToResetPassword = () => {
-        navigate('/update-password')
     }
 
     async function handleResetName(e) {
@@ -98,11 +90,21 @@ export default function Profile() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
-            <TopBar/>
-            <div className='flex flex-col items-center m-auto w-full'>
+        <div className="min-h-screen w-full flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
+            <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
+                <a onClick={async () => { navigate(-1); }}
+                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center justify-self-start hover:underline pl-4 mt-2"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                        <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
+                    </svg>
+                    back
+                </a>
+                <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
+            </div>
+            <p className='text-5xl text-white font-hero! text-center mt-8'>Profile</p>
+            <div className='flex flex-col items-center w-full mt-4'>
                 <div className="container m-auto flex flex-col gap-4 items-center py-8 rounded-xl bg-primary-colour shadow-xl">
-                    <p className='text-6xl mb-12 text-white font-hero!'>Profile</p>
                     <div className='flex flex-col items-center gap-4'>
                         <img className='w-40' src={profileImg}></img>
                         <form onSubmit={handleResetName} className='w-full' id='profile-form'>
@@ -120,7 +122,7 @@ export default function Profile() {
                         </form>
                         <p className='text-white text-xl text-left w-full'>Email: {employee.employee_email}</p>
                         <div className='flex gap-4'>
-                            <button className='text-black text-lg bg-complementary-colour2 px-4 py-2 mt-4 rounded-lg hover:scale-105 transition-transform hover:shadow-md hover:shadow-black hover:cursor-pointer' onClick={handleGoToResetPassword}>Reset Password</button>
+                            <button className='text-black text-lg bg-complementary-colour2 px-4 py-2 mt-4 rounded-lg hover:scale-105 transition-transform hover:shadow-md hover:shadow-black hover:cursor-pointer' onClick={() => navigate('/update-password')}>Reset Password</button>
                             <button 
                                 className='text-black text-lg bg-complementary-colour2 px-4 py-2 mt-4 rounded-lg hover:scale-105 transition-transform hover:shadow-md hover:shadow-black hover:cursor-pointer'
                                 onClick={() => {
@@ -129,7 +131,7 @@ export default function Profile() {
                                 type={updateName ? 'submit' : 'button'}
                             >{updateName ? "Back" : "Update Name"}</button>
                         </div>
-                        <p className='text-white mt-8 hover:underline hover:cursor-pointer' onClick={handleGoToDashboard}>Back to dashboard</p>
+                        <p className='text-white mt-8 hover:underline hover:cursor-pointer' onClick={() => navigate("/")}>Back to main menu</p>
                     </div>
                 </div>
             </div>

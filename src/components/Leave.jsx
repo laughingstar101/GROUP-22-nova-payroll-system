@@ -1,0 +1,214 @@
+import { supabase } from "../utils/supabase/supabase";
+import profileImg from '../assets/profile-empty.png'
+import logoImg from '../assets/logo.png'
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+export default function Leave() {
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [employee, setEmployee] = useState(null);
+    const [leaveData, setLeaveData] = useState({
+        leave_type: 'Annual Leave',
+        details: ''
+    });
+    const [leaveList, setLeaveList] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                alert("User not found. Redirecting..");
+                navigate("/");
+                return;
+            }
+
+            try {
+                // 1. Fetch employee using the logged‑in user's email
+                const { data: employeeData, error: employeeError } = await supabase
+                    .from("Employee")
+                    .select("id, employee_name, type, employee_company")
+                    .eq("employee_email", user.email)
+                    .single();
+
+                if (employeeError) throw employeeError;
+                setEmployee(employeeData);
+
+                // fetch all leave applications
+                const { data: leaveApplications, error: leaveError } = await supabase
+                    .from("Leave")
+                    .select(`*, employee:employee_id (employee_name, employee_email, type)`)
+                    .eq("employee.employee_company", employeeData.employee_company);
+
+                if (leaveError) throw leaveError;
+                setLeaveList(leaveApplications);
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                setEmployee(null);
+                alert("Error fetching data from database.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [navigate]);
+
+    useEffect(() => {
+        console.log(leaveList);
+    }, [leaveList])
+
+    if (loading) {
+        return (
+            <div className="min-h-screen w-full flex justify-center items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
+                <div className="loader"></div>
+            </div>
+        );
+    }
+
+    const handleLeaveSubmit = async () => {
+        const { data, error } = await supabase
+            .from("Leave")
+            .insert({
+                employee_id: employee.id,
+                leave_type: leaveData.leave_type,
+                details: leaveData.details,
+                status: "PENDING"
+            });
+        if (error) {
+            console.error("Error adding to table", error);
+            alert("Could not add leave application. Please try again later.");
+        };
+        alert("Leave application submitted. Please wait for approval by HR.");
+        console.log(data);
+    }
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setLeaveData(prev => ({ ...prev, [name]: value}));
+        console.log(leaveData);
+    }
+
+    const handleLeaveApprove = async (leaveId) => {
+        const input = confirm("Are you sure you want to APPROVE this leave application?");
+        if (!input) return;
+
+        const { error } = await supabase
+            .from("Leave")
+            .update({ status: "APPROVED" })
+            .eq("id", leaveId);
+        if (error) {
+            console.error("Error approving leave application: ", error);
+            alert("Error approving leave application. Please try again later.");
+        } else {
+            setLeaveList(prev => prev.map(leave => leave.id === leaveId ? { ...leave, status: "APPROVED" } : leave));
+        }
+    }
+
+    const handleLeaveReject = async (leaveId) => {
+        const input = confirm("Are you sure you want to REJECT this leave application?");
+        if (!input) return;
+
+        const { error } = await supabase
+            .from("Leave")
+            .update({ status: "REJECTED" })
+            .eq("id", leaveId);
+        if (error) {
+            console.error("Error rejecting leave application: ", error);
+            alert("Error rejecting leave application. Please try again later.");
+        } else {
+            alert("Leave application rejected.");
+            setLeaveList(prev => prev.map(leave => leave.id === leaveId ? { ...leave, status: "REJECTED" } : leave));
+        }
+    }
+
+    return (
+        <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
+            <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
+                <a onClick={async () => { navigate("/dashboard"); }}
+                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center justify-self-start hover:underline pl-4 mt-2"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                        <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
+                    </svg>
+                    back
+                </a>
+                <img src={logoImg} className="h-15 justify-self-center md:visible invisible" height='30'></img>
+                <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
+            </div>
+            {employee && employee.type !== 'HR' && (
+                <p className='text-5xl text-white font-hero! text-center mt-8'>Leave Application</p>
+            )}
+            {employee && employee.type === 'HR' && (
+                <p className='text-5xl text-white font-hero! text-center mt-8'>Update Leave Applications</p>
+            )}
+            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-6">
+                <p className="text-white text-2xl text-center">Hello, {employee.employee_name} !</p>
+                {employee && employee.type !== "HR" && (
+                    <div className="w-full">
+                        <form className="mx-auto max-w-full w-120 flex flex-col gap-4" onSubmit={handleLeaveSubmit}>
+                            <div className="flex gap-2 mt-8 md:flex-row flex-col md:items-center justify-center">
+                                <div className="flex flex-col gap-2 w-full">
+                                    <p className="text-white text-lg">Leave type</p>
+                                    <select name="leave_type" className="bg-gray-100 px-2 py-1" onChange={handleInputChange}>
+                                        <option value="Annual Leave">Annual Leave</option>
+                                        <option value="Sick Leave">Sick Leave</option>
+                                        <option value="Rest Day">Rest Day</option>
+                                        <option value="Public Holida Leavey">Public Holiday Leave</option>
+                                        <option value="Maternity Leave">Maternity Leave</option>
+                                        <option value="Paternity Leave">Paternity Leave</option>
+                                        <option value="Hospitalization Leave">Hospitalization Leave</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <p className="text-white text-lg">Details</p>
+                                <textarea onChange={handleInputChange} name="details" className="bg-white w-full px-2 resize-y h-24" placeholder="Your text here"></textarea>
+                            </div>
+                            <button type="submit" className="mt-4 uppercase bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all">Submit</button>
+                        </form>
+                    </div>
+                )}
+                {employee && employee.type === 'HR' && (
+                    <div className="w-full mt-8">
+                        <p className="text-white text-md mb-4">Num. of leave applications: {leaveList.length}</p>
+                        <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 w-full">
+                            {leaveList.map(leave => (
+                                <div className="bg-complementary-colour2 p-2 rounded-sm flex flex-col gap-2">
+                                    <p className="text-black text-lg font-bold text-center">{leave.employee.employee_name}</p>
+                                    <span className="flex justify-between lg:flex-row sm:flex-col max-[475px]:flex-col flex-row">
+                                        <p className="text-black">{leave.employee.employee_email}</p>
+                                        <p className="text-black">{leave.employee.type}</p>
+                                    </span>
+                                    <p><span className="font-bold">Type: </span>{leave.leave_type}</p>
+                                    <p><span className="font-bold">Details: </span><p className="overflow-y-scroll max-h-12">{leave.details}</p></p>
+                                    <p><span className="font-bold">Status: </span>
+                                        {leave.status === 'PENDING' && (
+                                            <span>{leave.status}</span>
+                                        )}
+                                        {leave.status === 'APPROVED' && (
+                                            <span className={`px-1 ${leave.status !== 'PENDING' ? 'bg-green-300' : 'bg-none'}`}>{leave.status}</span>
+                                        )}
+                                        {leave.status === 'REJECTED' && (
+                                            <span className={`px-1 ${leave.status !== 'PENDING' ? 'bg-red-300' : 'bg-none'}`}>{leave.status}</span>
+                                        )}
+                                    </p>
+                                    {leave.status === 'PENDING' && (
+                                        <div className="flex gap-2">
+                                            <button onClick={() => handleLeaveApprove(leave.id)} className='bg-green-600 text-white py-1 hover:bg-green-700 hover:cursor-pointer w-full'>Approve</button>
+                                            <button onClick={() => handleLeaveReject(leave.id)} className="bg-red-700 text-white py-1 hover:bg-red-800 hover:cursor-pointer w-full">Reject</button>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {employee == null || !employee && (
+                    <p>Employee doesn't exist</p>
+                )}
+            </div>
+        </div>
+    )
+}
