@@ -23,7 +23,9 @@ export default function Attendance() {
         return day >= 1 && day <= 5;
     })
     const [hasCheckedIn, setHasCheckedIn] = useState(false);
+    const [hasCheckedOut, setHasCheckedOut] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
+    const [status, setStatus] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -75,7 +77,65 @@ export default function Attendance() {
     const handleCheckIn = async () => {
         setActionLoading(true);
 
+        try {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const { data , error } = await supabase
+                .from("Attendance")
+                .insert({
+                    employee_id: employee.id,
+                    check_in: now.toISOString(),
+                    date: today,
+                    status: 'PENDING'
+                })
+                .select()
+                .single();
+            
+                if (error) throw error;
+                setAttendance(data);
+                alert("Checked in successfully.");
+        } catch (error) {
+            console.error(error);
+            alert("Failed to check in. Please try again later.");
+        } finally {
+            setActionLoading(false);
+            setHasCheckedIn(true);
+        }
+    }
 
+    const handleCheckOut = async () => {
+        setActionLoading(true);
+
+        try {
+            const now = new Date();
+            const checkInTime = new Date(attendance.check_in);
+            const durationHours = (now - checkInTime) / (1000 * 60 * 60);
+            setStatus(durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT_HOURS');
+            const { error } = await supabase
+                .from("Attendance")
+                .update({
+                    check_out: now.toISOString,
+                    work_duration: `${durationHours.toFixed(2)} hours`,
+                    status: status
+                })
+                .eq('id', attendance.id);
+                
+            if (error) throw error;
+            
+            setAttendance(prev => ({
+                ...prev,
+                check_out: now.toISOString(),
+                work_duration: `${durationHours.toFixed(2)} hours`,
+                status: status
+            }));
+            alert("Checked out successfully.");
+        } catch (error) {
+            console.error(error);
+            alert("Failed to check out. Please try again.");
+        } finally {
+            setActionLoading(false);
+            setHasCheckedOut(true);
+        }
     }
 
     if (loading) {
@@ -102,17 +162,24 @@ export default function Attendance() {
             </div>
             <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-6">
                 {isWeekday && (
-                    <section>
+                    <section className="flex flex-col items-center">
                         <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
-                        <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">Check In</button>
+                        {!hasCheckedIn && (
+                            <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">Check In</button>
+                        )}
+                        {hasCheckedIn && (
+                            <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">Check Out</button>
+                        )}
                         {actionLoading && (
                             <p className="text-white">Processing...</p>
                         )}
                     </section>
                 )}
                 {!isWeekday && (
-                    <p className="text-white text-2xl text-center">No attendance for {todayDate}</p>
-                    // add something funny here a image
+                    <section className="flex flex-col items-center gap-4">
+                        <p className="text-white text-2xl text-center">No attendance for {todayDate}</p>
+                        <img alt="no work image" src="https://media.makeameme.org/created/yay-no-work-cctoqg.jpg"/>
+                    </section>
                 )}
             </div>
         </div>
