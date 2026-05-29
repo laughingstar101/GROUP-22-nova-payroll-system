@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 export default function Leave() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const [company, setCompany] = useState(null);
     const [employee, setEmployee] = useState(null);
     const [leave, setLeave] = useState({
         leave_type: '',
@@ -33,24 +32,9 @@ export default function Leave() {
 
                 if (employeeError) throw employeeError;
                 setEmployee(employeeData);
-
-                // 2. Fetch the company using the employee_company foreign key
-                if (employeeData.employee_company) {
-                    const { data: companyData, error: companyError } = await supabase
-                        .from("Company")
-                        .select("id, company_name, company_email")
-                        .eq("id", employeeData.employee_company)
-                        .single();
-
-                    if (companyError) throw companyError;
-                    setCompany(companyData);
-                } else {
-                    console.warn("Employee has no associated company");
-                }
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setEmployee(null);
-                setCompany(null);
                 alert("Error fetching data from database.");
             } finally {
                 setLoading(false);
