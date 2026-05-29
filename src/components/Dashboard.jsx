@@ -161,7 +161,12 @@ export default function Dashboard() {
                 <img src={logoImg} className="h-15 justify-self-center" height='30'></img>
                 <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
             </div>
-            <div className="container bg-primary-colour mx-auto flex flex-col items-center mt-12 px-12 py-8 rounded-md shadow-xl">
+            {employee && employee.type == 'HR' && (
+                <section className="flex justify-center">
+                    <button onClick={() => navigate('/leave')} className="my-8 bg-complementary-colour text-xl py-2 px-4 cursor-pointer hover:scale-105 transition-all">Approve Leave Applications</button>    
+                </section>
+            )}
+            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl">
                 {employee && employee.type === 'HR' && company && (
                     <section className="w-full flex flex-col items-center">
                         <p className="text-white text-center text-3xl font-bold">
