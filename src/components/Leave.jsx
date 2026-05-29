@@ -141,10 +141,10 @@ export default function Leave() {
                         <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 w-full">
                             {leaveList.map(leave => (
                                 <div className="bg-complementary-colour2 p-2 rounded-sm flex flex-col gap-2">
-                                    <span className="grid grid-cols-[1fr_auto_1fr]">
-                                        <div></div>
+                                    <span className="grid md:grid-cols-[1fr_auto_1fr] grid-cols-[auto_1fr]">
+                                        <div className="hidden md:block"></div>
                                         <p className="text-black text-lg font-bold text-center">{leave.employee.employee_name}</p>
-                                        <button className="bg-red-500 p-0.5 w-fit justify-self-end rounded-sm hover:cursor-pointer hover:scale-110">
+                                        <button className="bg-red-500 p-0.5 w-fit h-fit justify-self-end rounded-sm hover:cursor-pointer hover:scale-110">
                                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
                                         </button>
                                     </span>
