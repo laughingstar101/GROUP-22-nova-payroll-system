@@ -118,6 +118,20 @@ export default function Leave() {
         }
     }
 
+    const handleLeaveReject = async (leaveId) => {
+        const { error } = await supabase
+            .from("Leave")
+            .update({ status: "REJECTED" })
+            .eq("id", leaveId);
+        if (error) {
+            console.error("Error rejecting leave application: ", error);
+            alert("Error rejecting leave application. Please try again later.");
+        } else {
+            alert("Leave application rejected.");
+            setLeaveList(prev => prev.map(leave => leave.id === leaveId ? { ...leave, status: "REJECTED" } : leave));
+        }
+    }
+
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
