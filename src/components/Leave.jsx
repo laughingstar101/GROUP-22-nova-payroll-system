@@ -8,8 +8,8 @@ export default function Leave() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [employee, setEmployee] = useState(null);
-    const [leave, setLeave] = useState({
-        leave_type: '',
+    const [leaveData, setLeaveData] = useState({
+        leave_type: 'Annual Leave',
         details: ''
     });
 
@@ -26,7 +26,7 @@ export default function Leave() {
                 // 1. Fetch employee using the logged‑in user's email
                 const { data: employeeData, error: employeeError } = await supabase
                     .from("Employee")
-                    .select("employee_name, type, employee_company")
+                    .select("id, employee_name, type")
                     .eq("employee_email", user.email)
                     .single();
 
@@ -52,14 +52,27 @@ export default function Leave() {
         );
     }
 
-    async function handleLeaveSubmit(e) {
-        e.PreventDefault();
+    const handleLeaveSubmit = async () => {
+        const { data, error } = await supabase
+            .from("Leave")
+            .insert({
+                employee_id: employee.id,
+                leave_type: leaveData.leave_type,
+                details: leaveData.details,
+                status: "UNAPPROVED"
+            });
+        if (error) {
+            console.error("Error adding to table", error);
+            alert("Could not add leave application. Please try again later.");
+        };
+        alert("Leave application submitted. Please wait for approval by HR.");
+        console.log(data);
     }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setLeave(prev => ({ ...prev, [name]: value}));
-        console.log(leave);
+        setLeaveData(prev => ({ ...prev, [name]: value}));
+        console.log(leaveData);
     }
 
     return (
