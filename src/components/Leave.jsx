@@ -140,13 +140,15 @@ export default function Leave() {
                         <p className="text-white text-md mb-4">Num of leave applications: {leaveList.length}</p>
                         <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 w-full">
                             {leaveList.map(leave => (
-                                <div className="bg-complementary-colour2 p-2 rounded-sm">
+                                <div className="bg-complementary-colour2 p-2 rounded-sm flex flex-col gap-2">
                                     <p className="text-black font-bold text-center">{leave.employee.employee_name}</p>
                                     <span className="flex justify-between lg:flex-row sm:flex-col flex-row">
                                         <p className="text-black">{leave.employee.employee_email}</p>
                                         <p className="text-black">{leave.employee.type}</p>
                                     </span>
-                                    <p className="">Type: {leave.leave_type}</p>
+                                    <p><span className="font-bold">Type: </span>{leave.leave_type}</p>
+                                    <p><span className="font-bold">Details: </span><p>{leave.details}</p></p>
+                                    <p><span className="font-bold">Status: </span>{leave.status}</p>
                                 </div>
                             ))}
                         </div>
