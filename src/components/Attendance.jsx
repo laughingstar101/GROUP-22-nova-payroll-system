@@ -62,6 +62,11 @@ export default function Attendance() {
         fetchData();
     }, [navigate]);
 
+    const isWeekday = () => {
+        const day = new Date().getDay();
+        return day >= 1 && day <= 5; // mon = 1, fri = 5
+    }
+
     if (loading) {
         return (
             <div className="min-h-screen w-full flex justify-center items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
