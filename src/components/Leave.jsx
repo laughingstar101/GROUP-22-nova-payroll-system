@@ -99,7 +99,6 @@ export default function Leave() {
             console.error("Error deleting leave application: ", error);
             alert("Error deleting leave application. Please try again later.");
         } else {
-            alert("Leave application deleted.");
             setLeaveList(prev => prev.filter(leave => leave.id !== leaveId));
         }
     }
@@ -116,7 +115,6 @@ export default function Leave() {
             console.error("Error approving leave application: ", error);
             alert("Error approving leave application. Please try again later.");
         } else {
-            alert("Leave application approved.");
             setLeaveList(prev => prev.map(leave => leave.id === leaveId ? { ...leave, status: "APPROVED" } : leave));
         }
     }
