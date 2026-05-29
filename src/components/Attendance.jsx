@@ -1,5 +1,34 @@
+import { useNavigate } from "react-router-dom";
+import profileImg from '../assets/profile-empty.png'
+import logoImg from '../assets/logo.png'
+import { useState } from "react";
+
 export default function Attendance() {
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false); // CHANGE BACK TO TRUE
+
+    if (loading) {
+        return (
+            <div className="min-h-screen w-full flex justify-center items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
+                <div className="loader"></div>
+            </div>
+        );
+    }
+
     return (
-        <p>Hello youre at attendance</p>
+        <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
+            <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
+                <a onClick={async () => { navigate("/dashboard"); }}
+                    className="flex items-center gap-2 text-white text-xl cursor-pointer text-center justify-self-start hover:underline pl-4 mt-2"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                        <path d="m368-417 202 202-90 89-354-354 354-354 90 89-202 202h466v126H368Z" />
+                    </svg>
+                    back
+                </a>
+                <img src={logoImg} className="h-15 justify-self-center md:visible invisible" height='30'></img>
+                <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
+            </div>
+        </div>
     )
 }
