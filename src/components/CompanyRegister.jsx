@@ -212,7 +212,7 @@ export default function CompanyRegister() {
                                 )}
                             </span>
                             <button type="submit" className="bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all">REGISTER</button>
-                            <p onClick={() => setIsLogin(true)} className="text-white hover:cursor-pointer hover:text-cyan-300">Login as user</p>
+                            <p onClick={() => setIsLogin(true)} className="text-white text-lg hover:cursor-pointer hover:text-cyan-300">Login</p>
                         </form>
                     </section>
                 ) : (
@@ -265,7 +265,7 @@ export default function CompanyRegister() {
                                 <p onClick={() => setIsResetPw(true)} className="mt-2 w-fit text-white hover:text-cyan-300 cursor-pointer">Forgot password?</p>
                             </div>
                             <button type="submit" className="bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all">LOGIN</button>
-                            <p onClick={() => setIsLogin(false)} className="text-white cursor-pointer hover:text-cyan-300">Back to register</p>
+                            <p onClick={() => setIsLogin(false)} className="text-white text-lg cursor-pointer hover:text-cyan-300">Back to register</p>
                         </form>
                     </section>
                 )
@@ -281,7 +281,7 @@ export default function CompanyRegister() {
                             onChange={handleResetPasswordChange}
                         />
                         <button className="bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all uppercase" type="submit">reset</button>
-                        <p onClick={() => setIsResetPw(false)} className="text-white cursor-pointer hover:text-cyan-300">Back</p>
+                        <p onClick={() => setIsResetPw(false)} className="text-white text-lg cursor-pointer hover:text-cyan-300">Back</p>
                     </form>
                 </section>
             )}
