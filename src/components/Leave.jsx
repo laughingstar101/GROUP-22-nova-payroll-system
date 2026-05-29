@@ -90,6 +90,34 @@ export default function Leave() {
         console.log(leaveData);
     }
 
+    const handleLeaveDelete = async (leaveId) => {
+        const { error } = await supabase
+            .from("Leave")
+            .delete()
+            .eq("id", leaveId);
+        if (error) {
+            console.error("Error deleting leave application: ", error);
+            alert("Error deleting leave application. Please try again later.");
+        } else {
+            alert("Leave application deleted.");
+            setLeaveList(prev => prev.filter(leave => leave.id !== leaveId));
+        }
+    }
+
+    const handleLeaveApprove = async (leaveId) => {
+        const { error } = await supabase
+            .from("Leave")
+            .update({ status: "APPROVED" })
+            .eq("id", leaveId);
+        if (error) {
+            console.error("Error approving leave application: ", error);
+            alert("Error approving leave application. Please try again later.");
+        } else {
+            alert("Leave application approved.");
+            setLeaveList(prev => prev.map(leave => leave.id === leaveId ? { ...leave, status: "APPROVED" } : leave));
+        }
+    }
+
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
@@ -144,7 +172,7 @@ export default function Leave() {
                                     <span className="grid md:grid-cols-[1fr_auto_1fr] grid-cols-[auto_1fr]">
                                         <div className="hidden md:block"></div>
                                         <p className="text-black text-lg font-bold text-center">{leave.employee.employee_name}</p>
-                                        <button className="bg-red-500 p-0.5 w-fit h-fit justify-self-end rounded-sm hover:cursor-pointer hover:scale-110">
+                                        <button onClick={() => handleLeaveDelete(leave.id)} className="bg-red-500 p-0.5 w-fit h-fit justify-self-end rounded-sm hover:cursor-pointer hover:scale-110">
                                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
                                         </button>
                                     </span>
@@ -156,8 +184,8 @@ export default function Leave() {
                                     <p><span className="font-bold">Details: </span><p>{leave.details}</p></p>
                                     <p><span className="font-bold">Status: </span>{leave.status}</p>
                                     <div className="flex gap-2">
-                                        <button className="bg-green-600 text-white py-1 hover:bg-green-700 hover:cursor-pointer w-full">Approve</button>
-                                        <button className="bg-red-700 text-white py-1 hover:bg-red-800 hover:cursor-pointer w-full">Reject</button>
+                                        <button onClick={() => handleLeaveApprove(leave.id)} className="bg-green-600 text-white py-1 hover:bg-green-700 hover:cursor-pointer w-full">Approve</button>
+                                        <button onClick={() => handleLeaveReject(leave.id)} className="bg-red-700 text-white py-1 hover:bg-red-800 hover:cursor-pointer w-full">Reject</button>
                                     </div>
                                 </div>
                             ))}
