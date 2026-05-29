@@ -6,6 +6,7 @@ import { supabase } from "../utils/supabase/supabase";
 
 export default function Attendance() {
     const navigate = useNavigate();
+
     const [loading, setLoading] = useState(true); // CHANGE BACK TO TRUE
     const [employee, setEmployee] = useState(null);
     const [attendance, setAttendance] = useState(null);
@@ -182,19 +183,18 @@ export default function Attendance() {
                     <p className="text-white text-3xl text-center font-bold">Attendance Records for {employee.employee_name}</p>
                     <div className="grid grid-cols-[1fr_auto_1fr] gap-4 w-full">
                         <span className= "flex gap-2 items-center text-white justify-self-start hover:cursor-pointer hover:underline"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>Last</span>
-                        {isWeekday && (
-                            <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
-                        )}
-                        {!isWeekday && (
-                            <p className="text-white text-2xl text-center">No attendance for {todayDate}</p>
-                        )}
+                        <p className="text-white text-2xl text-center">{todayDate}</p>
                         <span className="flex gap-2 items-center text-white justify-self-end hover:cursor-pointer hover:underline">Next<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z"/></svg></span>
                     </div>
                     {!isWeekday && (
-                        <img alt="no work image" src="https://media.makeameme.org/created/yay-no-work-cctoqg.jpg"/>
+                        <section className="flex flex-col gap-2">
+                            <p className="text-white text-2xl text-center">No attendance for {todayDate}</p>
+                            <img alt="no work image" src="https://media.makeameme.org/created/yay-no-work-cctoqg.jpg"/>
+                        </section>
                     )}
                     {isWeekday && (
                         <section>
+                            <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
                             {!hasCheckedIn && !hasCheckedOut && (
                                 <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">Check In</button>
                             )}
@@ -207,7 +207,6 @@ export default function Attendance() {
                                     <p className="text-white text-md">Checked out on: {formatTime(attendance.check_out)}</p>
                                     <p className="text-white text-md">Work duration: {attendance.work_duration}</p>
                                     <p className="text-white text-md">Status: {attendance.status}</p>
-                                    <p className="text-white text-xl">Come back tomorrow!</p>
                                 </section>
                             )}
                             {actionLoading && (
