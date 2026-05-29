@@ -22,6 +22,8 @@ export default function Attendance() {
         const day = new Date().getDay();
         return day >= 1 && day <= 5;
     })
+    const [hasCheckedIn, setHasCheckedIn] = useState(false);
+    const [actionLoading, setActionLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -54,6 +56,10 @@ export default function Attendance() {
                 if (attendanceError) throw attendanceError;
                 setAttendance(attendanceData || null);
 
+                if (attendance?.check_in) {
+                    setHasCheckedIn(true);
+                }
+
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setEmployee(null);
@@ -67,9 +73,9 @@ export default function Attendance() {
     }, [navigate]);
 
     const handleCheckIn = async () => {
-        if (!isWeekday) {
-            
-        }
+        setActionLoading(true);
+
+
     }
 
     if (loading) {
@@ -95,7 +101,19 @@ export default function Attendance() {
                 <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
             </div>
             <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-6">
-                <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
+                {isWeekday && (
+                    <section>
+                        <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
+                        <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">Check In</button>
+                        {actionLoading && (
+                            <p className="text-white">Processing...</p>
+                        )}
+                    </section>
+                )}
+                {!isWeekday && (
+                    <p className="text-white text-2xl text-center">No attendance for {todayDate}</p>
+                    // add something funny here a image
+                )}
             </div>
         </div>
     )
