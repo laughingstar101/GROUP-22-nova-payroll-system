@@ -6,14 +6,16 @@ import { supabase } from "../utils/supabase/supabase";
 
 export default function Attendance() {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false); // CHANGE BACK TO TRUE
+    const [loading, setLoading] = useState(true); // CHANGE BACK TO TRUE
     const [employee, setEmployee] = useState(null);
-    const [attendance, setAttendance] = useState({
-        check_in: '',
-        check_out: '',
-        date: '',
-        status: '',
-        work_duration: ''
+    const [todayDate] = useState(() => {
+        const now = new Date();
+        return now.toLocaleDateString('en-GB', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     });
 
     useEffect(() => {
@@ -69,6 +71,9 @@ export default function Attendance() {
                 </a>
                 <img src={logoImg} className="h-15 justify-self-center md:visible invisible" height='30'></img>
                 <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
+            </div>
+            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-6">
+                <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
             </div>
         </div>
     )
