@@ -78,7 +78,21 @@ export default function Attendance() {
         setActionLoading(true);
 
         try {
+            const { data:lateData, error:lateError } = await supabase 
+                .from("Company")
+                .select("work_start_time")
+                .eq('id', employee.employee_company)
+                .single();
+
+            if (lateError) throw lateError;
+
+            const workStartTime = lateData.work_start_time;
             const now = new Date();
+            const checkInTimeStr = now.toLocaleTimeString('en-GB', { hour12: false });
+            
+            const isLate = checkInTimeStr > workStartTime;
+            const onTimeStatus = isLate ? "LATE" : "ON TIME";
+
             const today = now.toISOString().split('T')[0];
             const { data , error } = await supabase
                 .from("Attendance")
@@ -86,7 +100,8 @@ export default function Attendance() {
                     employee_id: employee.id,
                     check_in: now.toISOString(),
                     date: today,
-                    status: 'PENDING'
+                    status: 'PENDING',
+                    status_on_time: onTimeStatus
                 })
                 .select()
                 .single();
@@ -94,7 +109,7 @@ export default function Attendance() {
             if (error) throw error;
             setAttendance(data);
             setHasCheckedIn(true);
-            alert("Checked in successfully.");
+            alert(`Checked in successfully. You are ${isLate ? 'LATE' : 'ON TIME'}`);
         } catch (error) {
             console.error(error);
             alert("Failed to check in. Please try again later.");
@@ -123,7 +138,7 @@ export default function Attendance() {
                 .update({
                     check_out: now.toISOString(),
                     work_duration: intervalLiteral,
-                    status: newStatus
+                    status_hours: newStatus
                 })
                 .eq('id', attendance.id);
                 
@@ -133,15 +148,15 @@ export default function Attendance() {
                 ...prev,
                 check_out: now.toISOString(),
                 work_duration: intervalLiteral,
-                status: newStatus
+                status_hours: newStatus
             }));
+            setHasCheckedOut(true);
             alert("Checked out successfully.");
         } catch (error) {
             console.error(error);
             alert("Failed to check out. Please try again.");
         } finally {
             setActionLoading(false);
-            setHasCheckedOut(true);
         }
     }
 
