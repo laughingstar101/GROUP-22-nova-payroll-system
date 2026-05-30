@@ -131,14 +131,14 @@ export default function Attendance() {
             const seconds = totalSeconds % 60;
             const intervalLiteral = `${hours} hours ${minutes} minutes ${seconds} seconds`;
             const durationHours = durationMs / (1000 * 60 * 60);
-            const newStatus = durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT HOURS';
+            const statusHours = durationHours >= 9 ? 'NORMAL' : 'INSUFFICIENT HOURS';
 
             const { error } = await supabase
                 .from("Attendance")
                 .update({
                     check_out: now.toISOString(),
                     work_duration: intervalLiteral,
-                    status_hours: newStatus
+                    status_hours: statusHours
                 })
                 .eq('id', attendance.id);
                 
@@ -148,7 +148,7 @@ export default function Attendance() {
                 ...prev,
                 check_out: now.toISOString(),
                 work_duration: intervalLiteral,
-                status_hours: newStatus
+                status_hours: statusHours
             }));
             setHasCheckedOut(true);
             alert("Checked out successfully.");
