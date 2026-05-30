@@ -3,23 +3,16 @@
 A modern payroll management system for companies, built as our final‑year Computer Science diploma project.  
 The application allows companies to register, manage employees, track attendance, handle leave requests, and securely authenticate users.
 
-## Features
+## Key Highlights
 
-- **Company Registration** – Companies sign up with name, email, and password.  
-- **Role‑Based Dashboards** – HR users see employee management & leave approval interfaces; regular employees access attendance and leave features.  
-- **Employee Management (HR)** – Add multiple employees at once, assign roles (`Part‑time`, `Full‑time`, `HR`).  
-  - New employees receive a temporary password and a password‑reset email (via Supabase).  
-- **Attendance Tracking** – Employees check in and out (via button or QR code) on weekdays.  
-  - Automatic calculation of work duration (hours, minutes, seconds).  
-  - Late check‑ins and insufficient working hours are flagged.  
-  - HR can view attendance history and monitor compliance.  
-- **Leave Management** – Employees submit leave applications (type, details).  
-  - HR approves or rejects requests; status updates instantly.  
-  - Employees can view their leave history.  
-- **Profile Editing** – Users can update their display name.  
-- **Password Reset** – Secure password recovery via email.  
-- **Responsive UI** – Built with Tailwind CSS, works on desktop and mobile.  
-- **Authentication** – Fully managed by Supabase Auth.
+- **Company registration** – Sign up with name, email, password.  
+- **Role‑based dashboards** – HR manages employees & leave; employees track attendance & leave.  
+- **Employee management (HR)** – Bulk add employees, assign roles, send password‑reset emails.  
+- **Attendance tracking** – Check in/out (button or QR code), automatic work duration & late detection.  
+- **Leave management** – Submit requests, HR approves/rejects, status updates instantly.  
+- **Profile editing** – Update name, reset password.  
+- **Authentication** – Supabase Auth (email/password).  
+- **Responsive UI** – Tailwind CSS, works on desktop & mobile.
 
 ## Tech Stack
 
