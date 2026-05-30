@@ -162,8 +162,9 @@ export default function Dashboard() {
                 <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end"></img>
             </div>
             {employee && employee.type === 'HR' && (
-                <section className="flex justify-center">
-                    <button onClick={() => navigate('/leave')} className="mt-8 bg-complementary-colour text-xl py-2 px-4 cursor-pointer hover:scale-105 transition-all">Approve Leave Applications</button>    
+                <section className="flex justify-center sm:gap-4 sm:flex-row flex-col items-center">
+                    <button onClick={() => navigate('/leave')} className="mt-8 bg-complementary-colour text-xl py-2 px-4 cursor-pointer hover:scale-105 transition-all w-fit">Approve Leave Applications</button>    
+                    <button onClick={() => navigate('/attendance')} className="mt-8 bg-complementary-colour2 text-xl py-2 px-4 cursor-pointer hover:scale-105 transition-all w-fit">Check Attendance</button>    
                 </section>
             )}
             <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 mt-8 rounded-md shadow-xl">
