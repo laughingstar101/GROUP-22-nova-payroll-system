@@ -13,7 +13,7 @@ export default function CompanyRegister() {
     })
     const [passwordVisBtn, setVis] = useState(false) // true = visible, false = hidden
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isLogin, setIsLogin] = useState(false);
+    const [isLogin, setIsLogin] = useState(true);
     const [loginData, setLoginData] = useState({
         email: '',
         password: ''
@@ -169,7 +169,7 @@ export default function CompanyRegister() {
                                 onChange={handleInputChange}
                             />
                             <input 
-                                placeholder="Company Email"
+                                placeholder="Company HR Email"
                                 name="companyEmail"
                                 type="email" 
                                 className="bg-amber-50 w-full h-12! pl-2.5!"
@@ -263,7 +263,7 @@ export default function CompanyRegister() {
                                 <p onClick={() => setIsResetPw(true)} className="mt-2 w-fit text-white hover:underline cursor-pointer">Forgot password?</p>
                             </div>
                             <button type="submit" className="bg-complementary-colour text-3xl w-full pt-2! pb-2! cursor-pointer hover:scale-105 transition-all">LOGIN</button>
-                            <p onClick={() => setIsLogin(false)} className="text-white text-lg cursor-pointer hover:underline">Back to register</p>
+                            <p onClick={() => setIsLogin(false)} className="text-white text-lg cursor-pointer hover:underline">Register your company</p>
                         </form>
                     </section>
                 )
