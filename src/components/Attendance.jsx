@@ -30,6 +30,14 @@ export default function Attendance() {
     const [companySettings, setCompanySettings] = useState({ work_start_time: '', required_hours: '' });
     const [elapsedSeconds, setElapsedSeconds] = useState(0);
     const timerRef = useRef(null);
+    const [editingId, setEditingId] = useState(null);
+    const [editFormData, setEditFormData] = useState({
+        check_in: '',
+        check_out: '',
+        work_duration: '',
+        status_hours: '',
+        status_on_time: ''
+    });
 
     const startTimer = (checkInTime) => {
         if (timerRef.current) clearInterval(timerRef.current);
@@ -252,9 +260,59 @@ export default function Attendance() {
         }
     }
 
-    // const handleUpdate = async (id) => {
+    const startEdit = (att) => {
+        setEditingId(att.id);
+        setEditFormData({
+            check_in: att.check_in,
+            check_out: att.check_out,
+            work_duration: att.work_duration,
+            status_hours: att.status_hours,
+            status_on_time: att.status_on_time
+        });
+    };
 
-    // }
+    const cancelEdit = () => {
+        setEditingId(null);
+        setEditFormData({
+            check_in: '',
+            check_out: '',
+            work_duration: '',
+            status_hours: '',
+            status_on_time: ''
+        });
+    };
+
+    const handleEditChange = (e) => {
+        const { name, value } = e.target;
+        setEditFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleUpdate = async (id) => {
+        if (!confirm("Are you sure you want to update this attendance record?")) return;
+        const { error } = await supabase
+            .from("Attendance")
+            .update({
+                check_in: editFormData.check_in,
+                check_out: editFormData.check_out,
+                work_duration: editFormData.work_duration,
+                status_hours: editFormData.status_hours,
+                status_on_time: editFormData.status_on_time
+            })
+            .eq('id', id);
+        if (error) {
+            console.error(error);
+            alert("Failed to update record. Please try again.");
+        } else {
+            alert("Attendance record updated.");
+            // Update local state
+            setAttendanceList(prevList =>
+                prevList.map(record =>
+                    record.id === id ? { ...record, ...editFormData } : record
+                )
+            );
+            cancelEdit();
+        }
+    };
 
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
@@ -354,29 +412,122 @@ export default function Attendance() {
                             <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
                                 {attendanceList.map(att => (
                                     <div key={att.id} className="bg-complementary-colour2 px-4 py-2">
-                                        <p className="text-center font-bold text-lg">{att.employee?.employee_name || 'Unknown'}</p>
-                                        <p className="text-center font-bold">Date: {formatDate(att.date)}</p>
-                                        <div className="grid grid-cols-2">
+                                    {editingId === att.id ? (
+                                        // Edit mode
+                                        <div className="space-y-2">
+                                            <p className="text-center font-bold text-lg">{att.employee?.employee_name || 'Unknown'}</p>
+                                            <p className="text-center font-bold">Date: {formatDate(att.date)}</p>
+                                            
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm font-semibold">Check In</label>
+                                                    <input
+                                                        type="text"
+                                                        name="check_in"
+                                                        value={editFormData.check_in}
+                                                        onChange={handleEditChange}
+                                                        className="bg-white p-1 rounded text-sm"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm font-semibold">Check Out</label>
+                                                    <input
+                                                        type="text"
+                                                        name="check_out"
+                                                        value={editFormData.check_out}
+                                                        onChange={handleEditChange}
+                                                        className="bg-white p-1 rounded text-sm"
+                                                    />
+                                                </div>
+                                            </div>
+
                                             <div className="flex flex-col">
-                                                <p className="text-center">Check In Time: </p>
-                                                <p className="text-center">{formatTime(att.check_in)}</p>
+                                                <label className="text-sm font-semibold">Work Duration</label>
+                                                <input
+                                                    type="text"
+                                                    name="work_duration"
+                                                    value={editFormData.work_duration}
+                                                    onChange={handleEditChange}
+                                                    className="bg-white p-1 rounded text-sm"
+                                                />
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm font-semibold">Status Hours</label>
+                                                    <input
+                                                        type="text"
+                                                        name="status_hours"
+                                                        value={editFormData.status_hours}
+                                                        onChange={handleEditChange}
+                                                        className="bg-white p-1 rounded text-sm"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <label className="text-sm font-semibold">Status On Time</label>
+                                                    <input
+                                                        type="text"
+                                                        name="status_on_time"
+                                                        value={editFormData.status_on_time}
+                                                        onChange={handleEditChange}
+                                                        className="bg-white p-1 rounded text-sm"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-2 mt-4">
+                                                <button
+                                                    onClick={() => handleUpdate(att.id)}
+                                                    className="w-full bg-green-600 text-white py-1 rounded hover:bg-green-700 hover:cursor-pointer transition-all"
+                                                >
+                                                    Submit
+                                                </button>
+                                                <button
+                                                    onClick={cancelEdit}
+                                                    className="w-full bg-gray-500 text-white py-1 rounded hover:bg-gray-600 hover:cursor-pointer transition-all"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        // View mode
+                                        <div>
+                                            <p className="text-center font-bold text-lg">{att.employee?.employee_name || 'Unknown'}</p>
+                                            <p className="text-center font-bold">Date: {formatDate(att.date)}</p>
+                                            <div className="grid grid-cols-2">
+                                                <div className="flex flex-col">
+                                                    <p className="text-center">Check In Time:</p>
+                                                    <p className="text-center">{formatTime(att.check_in)}</p>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <p className="text-center">Check Out Time:</p>
+                                                    <p className="text-center">{formatTime(att.check_out)}</p>
+                                                </div>
                                             </div>
                                             <div className="flex flex-col">
-                                                <p className="text-center">Check Out Time: </p>
-                                                <p className="text-center">{formatTime(att.check_out)}</p>
+                                                <p className="text-center">Work duration:</p>
+                                                <p className="text-center">{att.work_duration}</p>
+                                            </div>
+                                            <p>Status Hours: {att.status_hours}</p>
+                                            <p>Status On Time: {att.status_on_time}</p>
+                                            <div className="grid grid-cols-2 mt-4">
+                                                <button
+                                                    onClick={() => startEdit(att)}
+                                                    className="w-full bg-complementary-colour3 py-1 hover:cursor-pointer hover:scale-110 transition-all"
+                                                >
+                                                    UPDATE
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(att.id)}
+                                                    className="w-full bg-red-400 py-1 hover:cursor-pointer hover:scale-110 transition-all"
+                                                >
+                                                    DELETE
+                                                </button>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col">
-                                            <p className="text-center">Work duration: </p>
-                                            <p className="text-center">{att.work_duration}</p>
-                                        </div>
-                                        <p>Status Hours: {att.status_hours}</p>
-                                        <p>Status On Time: {att.status_on_time}</p>
-                                        <div className="grid grid-cols-2 mt-4">
-                                            <button className="w-full bg-complementary-colour3 py-1 hover:cursor-pointer hover:scale-110 transition-all">UPDATE</button>
-                                            <button onClick={() => handleDelete(att.id)} className="w-full bg-red-400 py-1 hover:cursor-pointer hover:scale-110 transition-all">DELETE</button>
-                                        </div>
-                                    </div>
+                                    )}
+                                </div>
                                 ))}
                             </div>
                         )}
