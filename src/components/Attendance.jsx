@@ -26,15 +26,12 @@ export default function Attendance() {
     const [hasCheckedIn, setHasCheckedIn] = useState(false);
     const [hasCheckedOut, setHasCheckedOut] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
-    const [scanning, setScanning] = useState(false);
+    // const [scanning, setScanning] = useState(false);
     const scannerRef = useRef(null);
+    const [showScanner, setShowScanner] = useState(false);
+    const scannerContainerRef = useRef(null);
 
     useEffect(() => {
-        return () => {
-            if (scannerRef.current) {
-                scannerRef.current.clear();
-                scannerRef.current = null;
-            }
         const fetchData = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
@@ -71,7 +68,36 @@ export default function Attendance() {
             }
         };
         fetchData();
- } }, [navigate]);
+
+        return () => {
+            if (scannerRef.current) {
+                scannerRef.current.clear();
+                scannerRef.current = null;
+            }
+        }
+    }, [navigate]);
+
+    const stopScan = () => {
+        if (scannerRef.current) {
+            scannerRef.current.clear();
+            scannerRef.current = null;
+        }
+        setShowScanner(false);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (scannerContainerRef.current && !scannerContainerRef.current.contains(event.target)) {
+                stopScan();
+            }
+        };
+        if (showScanner) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [showScanner]);
 
     const handleCheckIn = async () => {
         setActionLoading(true);
@@ -84,7 +110,7 @@ export default function Attendance() {
                     employee_id: employee.id,
                     check_in: now.toISOString(),
                     date: today,
-                    status: 'PENDING'
+                    status_hours: 'PENDING'
                 })
                 .select()
                 .single();
@@ -93,7 +119,7 @@ export default function Attendance() {
             setHasCheckedIn(true);
             alert("Checked in successfully.");
         } catch (error) {
-            console.error(error);
+            console.log("Full error object:", error);
             alert("Failed to check in. Please try again later.");
         } finally {
             setActionLoading(false);
@@ -119,7 +145,7 @@ export default function Attendance() {
                 .update({
                     check_out: now.toISOString(),
                     work_duration: intervalLiteral,
-                    status: newStatus
+                    status_hours: newStatus
                 })
                 .eq('id', attendance.id);
             if (error) throw error;
@@ -127,7 +153,7 @@ export default function Attendance() {
                 ...prev,
                 check_out: now.toISOString(),
                 work_duration: intervalLiteral,
-                status: newStatus
+                status_hours: newStatus
             }));
             setHasCheckedOut(true);
             alert("Checked out successfully.");
@@ -141,38 +167,30 @@ export default function Attendance() {
 
     // QR scan handler
     const startScan = () => {
-    setShowScanner(true);
-    // Wait for the container to be rendered
-    setTimeout(() => {
-        const scanner = new Html5QrcodeScanner(
-            "qr-reader",
-            { fps: 10, qrbox: { width: 200, height: 200 } },
-            false
-        );
-        scanner.render(
-            (decodedText) => {
-                if (decodedText === employee.id) {
-                    if (!hasCheckedIn) handleCheckIn();
-                    else if (hasCheckedIn && !hasCheckedOut) handleCheckOut();
-                    else alert("You have already completed attendance for today.");
-                } else {
-                    alert("Invalid QR code.");
-                }
-                stopScan(); // close scanner after scan
-            },
-            (error) => console.warn(error)
-        );
-        scannerRef.current = scanner;
-    }, 100);
-};
-
-const stopScan = () => {
-    if (scannerRef.current) {
-        scannerRef.current.clear();
-        scannerRef.current = null;
-    }
-    setShowScanner(false);
-};
+        setShowScanner(true);
+        // Wait for the container to be rendered
+        setTimeout(() => {
+            const scanner = new Html5QrcodeScanner(
+                "qr-reader",
+                { fps: 10, qrbox: { width: 200, height: 200 } },
+                false
+            );
+            scanner.render(
+                (decodedText) => {
+                    if (decodedText === employee.id) {
+                        if (!hasCheckedIn) handleCheckIn();
+                        else if (hasCheckedIn && !hasCheckedOut) handleCheckOut();
+                        else alert("You have already completed attendance for today.");
+                    } else {
+                        alert("Invalid QR code.");
+                    }
+                    stopScan(); // close scanner after scan
+                },
+                (error) => console.warn(error)
+            );
+            scannerRef.current = scanner;
+        }, 100);
+    };
 
     const formatTime = (isoString) => {
         if (!isoString) return '-';
@@ -193,24 +211,6 @@ const stopScan = () => {
         );
     }
 
-    const [showScanner, setShowScanner] = useState(false);
-const scannerRef = useRef(null);
-const scannerContainerRef = useRef(null);
-
-useEffect(() => {
-    const handleClickOutside = (event) => {
-        if (scannerContainerRef.current && !scannerContainerRef.current.contains(event.target)) {
-            stopScan();
-        }
-    };
-    if (showScanner) {
-        document.addEventListener('mousedown', handleClickOutside);
-    } else {
-        document.removeEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-}, [showScanner]);
-
     return (
         <div className="min-h-screen flex flex-col bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
             <div className='bg-primary-colour w-full grid grid-cols-3 py-4 px-4'>
@@ -230,9 +230,9 @@ useEffect(() => {
                         Attendance Records for {employee.employee_name}
                     </p>
                     <div className="grid grid-cols-[1fr_auto_1fr] gap-4 w-full">
-                        <span className="flex gap-2 items-center text-white justify-self-start"> </span>
+                        <span className="flex gap-2 items-center text-white justify-self-start"></span>
                         <p className="text-white text-2xl text-center">{todayDate}</p>
-                        <span className="flex gap-2 items-center text-white justify-self-end"> </span>
+                        <span className="flex gap-2 items-center text-white justify-self-end"></span>
                     </div>
                     {!isWeekday && (
                         <section className="flex flex-col gap-2">
@@ -243,26 +243,34 @@ useEffect(() => {
                     {isWeekday && (
                         <section className="flex flex-col items-center gap-2">
                             <p className="text-white text-2xl text-center">Attendance for {todayDate}</p>
-                            {!hasCheckedIn && !hasCheckedOut && (
-                                <>
-                                    <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
-                                        Check In
-                                    </button>
-                                    <button onClick={startScan} className="bg-blue-500 text-white text-xl p-2 rounded-lg">
-                                        Scan QR
-                                    </button>
-                                </>
-                            )}
-                            {hasCheckedIn && !hasCheckedOut && (
-                                <>
-                                    <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
-                                        Check Out
-                                    </button>
-                                    <button onClick={startScan} className="bg-blue-500 text-white text-xl p-2 rounded-lg">
-                                        Scan QR
-                                    </button>
-                                </>
-                            )}
+                            <div className="relative">
+                                {!hasCheckedIn && !hasCheckedOut && (
+                                    <>
+                                        <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
+                                            Check In
+                                        </button>
+                                        <button onClick={startScan} className="bg-blue-500 text-white text-xl p-2 rounded-lg hover:cursor-pointer hover:scale-110 transition-all">
+                                            Scan QR
+                                        </button>
+                                    </>
+                                )}
+                                {hasCheckedIn && !hasCheckedOut && (
+                                    <>
+                                        <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
+                                            Check Out
+                                        </button>
+                                        <button onClick={startScan} className="bg-blue-500 text-white text-xl p-2 rounded-lg">
+                                            Scan QR
+                                        </button>
+                                    </>
+                                )}
+                                {showScanner && (
+                                    <div className="absolute z-50 bg-white p-4 rounded-lg shadow-xl" style={{ top: 'auto', bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: '10px' }} ref={scannerContainerRef}>
+                                        <div id="qr-reader" style={{ width: '250px' }}></div>
+                                        <button onClick={stopScan} className="mt-2 bg-red-500 text-white px-3 py-1 rounded w-full">Cancel</button>
+                                    </div>
+                                )}
+                            </div>
                             {hasCheckedIn && hasCheckedOut && (
                                 <div className="text-white text-center space-y-1">
                                     <p>Checked in: {formatTime(attendance.check_in)}</p>
@@ -271,13 +279,6 @@ useEffect(() => {
                                     <p>Status: {attendance.status}</p>
                                 </div>
                             )}
-                            
-                            {showScanner && (
-    <div className="absolute z-50 bg-white p-4 rounded-lg shadow-xl" style={{ top: 'auto', bottom: '100%', left: '50%', transform: 'translateX(-50%)', marginBottom: '10px' }} ref={scannerContainerRef}>
-        <div id="qr-reader" style={{ width: '250px' }}></div>
-        <button onClick={stopScan} className="mt-2 bg-red-500 text-white px-3 py-1 rounded w-full">Cancel</button>
-    </div>
-)}
                             {actionLoading && <p className="text-white">Processing...</p>}
                         </section>
                     )}
