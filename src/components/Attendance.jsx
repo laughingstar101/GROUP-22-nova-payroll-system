@@ -27,6 +27,7 @@ export default function Attendance() {
     const [actionLoading, setActionLoading] = useState(false);
     const [viewRecords, setViewRecords] = useState(false);
     const [attendanceList, setAttendanceList] = useState([]);
+    const [companySettings, setCompanySettings] = useState({ work_start_time: '', required_hours: '' });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,6 +46,16 @@ export default function Attendance() {
                 if (employeeError) throw employeeError;
                 setEmployee(employeeData);
 
+                if (employeeData.employee_company) {
+                    const { data: compData, error: compError } = await supabase
+                        .from("Company")
+                        .select("work_start_time, required_hours")
+                        .eq("id", employeeData.employee_company)
+                        .single();
+                    if (compError) throw compError;
+                    else setCompanySettings(compData);
+                }
+
                 const today = new Date().toISOString().split('T')[0];
                 const { data: attendanceData, error: attendanceError } = await supabase
                     .from("Attendance")
@@ -57,16 +68,6 @@ export default function Attendance() {
                 setAttendance(attendanceData || null);
                 if (attendanceData?.check_in) setHasCheckedIn(true);
                 if (attendanceData?.check_out) setHasCheckedOut(true);
-
-                if (employeeData.type === 'HR') {
-                    const { data: allAttendanceData, error: allAttendanceError } = await supabase
-                        .from("Attendance")
-                        .select("*, employee:employee_id (employee_company)")
-                        .eq('employee.employee_company', employeeData.employee_company);
-                    if (allAttendanceError) throw allAttendanceError;
-                    setAttendanceList(allAttendanceData || null);
-                    console.log(attendanceList);
-                }
 
             } catch (error) {
                 console.log("Error fetching data:", error);
@@ -83,7 +84,7 @@ export default function Attendance() {
             if (!employee || employee.type !== 'HR') return;
             const { data: allAttendanceData, error: allAttendanceError } = await supabase
                 .from("Attendance")
-                .select("*, employee:employee_id (employee_company)")
+                .select("*, employee:employee_id (employee_name, type, employee_company)")
                 .eq('employee.employee_company', employee.employee_company);
             if (allAttendanceError) {
                 console.log(allAttendanceError);
@@ -184,12 +185,34 @@ export default function Attendance() {
         });
     };
 
+    const formatDate = (dateStr) => {
+        if (!dateStr) return;
+        const [year, month, day] = dateStr.split('-');
+        return `${day}/${month}/${year}`;
+    }
+
     if (loading) {
         return (
             <div className="min-h-screen w-full flex justify-center items-center bg-linear-to-br from-secondary-colour3 to-secondary-colour2">
                 <div className="loader"></div>
             </div>
         );
+    }
+
+    const handleDelete = async (id) => {
+        const { error } = await supabase
+            .from("Attendance")
+            .delete()
+            .eq('id', id)
+            .single();
+        if (error) {
+            console.log(error);
+            alert("Failed to delete record. Please try again later.");
+        } else {
+            alert("Attendance deleted.")
+            setAttendanceList(prevList => prevList.filter(record => record.id !== id));
+        }
+
     }
 
     return (
@@ -205,7 +228,10 @@ export default function Attendance() {
                 <img src={logoImg} className="h-15 justify-self-center md:visible invisible" alt="logo" />
                 <img onClick={() => navigate("/profile")} src={profileImg} className="h-15 hover:cursor-pointer justify-self-end" alt="profile" />
             </div>
-            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-6">
+            {employee.type === 'HR' && (
+                <p className="text-white font-hero! text-5xl text-center mt-8">All Attendance Records</p>
+            )}
+            <div className="container bg-primary-colour mx-auto flex flex-col items-center px-12 py-8 rounded-md shadow-xl mt-4">
                 {employee.type !== 'HR' && (
                     <>
                         {!viewRecords && (
@@ -230,18 +256,21 @@ export default function Attendance() {
                                         {/* <p className="text-white text-2xl text-center">Attendance for {todayDate}</p> */}
                                         <div>
                                             {!hasCheckedIn && !hasCheckedOut && (
-                                                <>
-                                                    <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
+                                                <div className="flex flex-col">
+                                                    <p className="text-white text-lg">Check in by {companySettings.work_start_time}</p>
+                                                    <p className="text-white text-lg">Required hours: {companySettings.required_hours} hours</p>
+                                                    <button onClick={handleCheckIn} className="bg-green-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all mt-8">
                                                         Check In
                                                     </button>
-                                                </>
+                                                </div>
                                             )}
                                             {hasCheckedIn && !hasCheckedOut && (
-                                                <>
-                                                    <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all">
+                                                <div className="flex flex-col">
+                                                    <p className="text-white text-lg">Required hours: {companySettings.required_hours} hours</p>
+                                                    <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all mt-8">
                                                         Check Out
                                                     </button>
-                                                </>
+                                                </div>
                                             )}
                                         </div>
                                         {hasCheckedIn && hasCheckedOut && (
@@ -275,8 +304,40 @@ export default function Attendance() {
                     </>
                 )}
                 {employee.type === 'HR' && (
-                    <>
-                    </>
+                    <div className="w-full">
+                        {attendanceList.length === 0 ? (
+                            <p className="text-white text-center">No attendance records found.</p>
+                        ) : (
+                            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
+                                {attendanceList.map(att => (
+                                    <div key={att.id} className="bg-complementary-colour2 px-4 py-2">
+                                        <p className="text-center font-bold text-lg">{att.employee?.employee_name || 'Unknown'}</p>
+                                        <p className="text-center font-bold">Date: {formatDate(att.date)}</p>
+                                        <div className="grid grid-cols-2">
+                                            <div className="flex flex-col">
+                                                <p className="text-center">Check In Time: </p>
+                                                <p className="text-center">{formatTime(att.check_in)}</p>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <p className="text-center">Check Out Time: </p>
+                                                <p className="text-center">{formatTime(att.check_out)}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <p className="text-center">Work duration: </p>
+                                            <p className="text-center">{att.work_duration}</p>
+                                        </div>
+                                        <p>Status Hours: {att.status_hours}</p>
+                                        <p>Status On Time: {att.status_on_time}</p>
+                                        <div className="grid grid-cols-2 mt-4">
+                                            <button className="w-full bg-complementary-colour3 py-1 hover:cursor-pointer hover:scale-110 transition-all">UPDATE</button>
+                                            <button onClick={() => handleDelete(att.id)} className="w-full bg-red-400 py-1 hover:cursor-pointer hover:scale-110 transition-all">DELETE</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 )}
             </div>
         </div>
