@@ -301,7 +301,9 @@ export default function Attendance() {
                                             {hasCheckedIn && !hasCheckedOut && (
                                                 <div className="flex flex-col">
                                                     <p className="text-white text-lg">Required hours: {companySettings.required_hours} hours</p>
-                                                    <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all mt-8">
+                                                    <p className="text-white text-lg">Elapsed Time: </p>
+                                                    <p className="text-white text-2xl text-center">{formatElapsedTime(elapsedSeconds)}</p>
+                                                    <button onClick={handleCheckOut} className="bg-red-400 text-3xl p-2 cursor-pointer hover:scale-105 transition-all mt-4">
                                                         Check Out
                                                     </button>
                                                 </div>
